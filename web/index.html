@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mână în mână – Învață limbajul semnelor</title>
+<link rel="icon" href="data:,">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#eaf4fb;--card:#fff;--ink:#12304d;--mut:#6b88a3;--g:#2f80c9;--gd:#1f5f9b;--b:#ff8a65;--bd:#d9683f;--r:#e5566d;--y:#f6cf6b;--line:#d5e5f1;--skin:#e8b98f}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1a2b;--card:#12263d;--ink:#e8f1fa;--mut:#8aa4bd;--line:#20405f;--skin:#c9976f}}
+:root[data-theme="dark"]{--bg:#0b1a2b;--card:#12263d;--ink:#e8f1fa;--mut:#8aa4bd;--line:#20405f;--skin:#c9976f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-weight:700}
+.hide{display:none!important}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 18px;max-width:640px;margin:0 auto}
+.top b{font-size:18px}
+.stats{display:flex;gap:14px}.stats span{font-weight:800}
+.tabs{display:flex;justify-content:center;gap:8px;padding-bottom:6px}
+.tabs button{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 20px;font:inherit;font-weight:800;cursor:pointer}
+.tabs button.on{border-color:var(--b);color:var(--b)}
+main{max-width:640px;margin:0 auto;padding:10px 18px 90px}
+.unit{border-radius:26px 26px 26px 6px;padding:16px 20px;color:#fff;margin:22px 0 10px;background:linear-gradient(135deg,var(--g),#5aa7e6)}
+.unit.u2{background:linear-gradient(135deg,var(--b),#ffb08f)}
+.unit small{opacity:.85;font-weight:800;letter-spacing:.05em}
+.unit div{font-size:22px;font-weight:700;font-family:Georgia,"Times New Roman",serif}
+.path{display:flex;flex-direction:column;align-items:center;gap:16px;padding:10px 0}
+.node{width:78px;height:78px;border-radius:30px 30px 30px 8px;border:0;background:var(--g);box-shadow:0 10px 22px rgba(47,128,201,.35);color:#fff;font:inherit;font-size:28px;font-weight:800;cursor:pointer;position:relative}
+.node.lock{background:var(--line);box-shadow:none;color:var(--mut);cursor:not-allowed}
+.node.done{background:var(--y);box-shadow:0 10px 22px rgba(246,207,107,.5)}
+.node.cur::after{content:"START";position:absolute;top:-30px;left:50%;transform:translateX(-50%);background:var(--card);color:var(--b);border:2px solid var(--line);border-radius:12px;padding:2px 10px;font-size:12px;animation:bob 1s infinite alternate}
+@keyframes bob{to{top:-36px}}
+.lbl{font-size:12px;color:var(--mut);text-align:center;margin-top:10px}
+.card{background:var(--card);border:0;box-shadow:0 4px 16px rgba(18,48,77,.08);border-radius:22px;padding:16px;margin-bottom:14px}
+.btn{width:100%;background:var(--g);color:#fff;border:0;border-radius:999px;box-shadow:0 6px 16px rgba(47,128,201,.3);padding:14px;font:inherit;font-weight:800;font-size:16px;letter-spacing:.04em;cursor:pointer;text-transform:uppercase}
+.btn:disabled{background:var(--line);box-shadow:none;color:var(--mut);cursor:default}
+.btn.r{background:var(--r)}
+.bar{height:16px;background:var(--line);border-radius:9px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;background:var(--g);border-radius:9px;transition:width .4s}
+#player{position:fixed;inset:0;background:var(--bg);z-index:10;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+.ph{display:flex;align-items:center;gap:14px;padding:16px 18px;max-width:640px;width:100%;margin:0 auto}
+.x{background:none;border:0;color:var(--mut);font-size:24px;cursor:pointer}
+.pb{flex:1;overflow:auto;max-width:640px;width:100%;margin:0 auto;padding:10px 18px;text-align:center}
+.pb h2{font-family:Georgia,serif;font-weight:700;font-size:26px;margin:8px 0 18px}
+.opts{display:grid;gap:12px;margin-top:14px}
+.opts.h{grid-template-columns:repeat(3,1fr)}
+.opt{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px;font:inherit;font-size:24px;font-weight:800;color:var(--ink);cursor:pointer}
+.opt.sel{border-color:var(--b);background:rgba(255,138,101,.16)}
+.foot{border-top:2px solid var(--line);padding:16px 18px calc(16px + env(safe-area-inset-bottom,0px))}
+.foot.ok{background:rgba(47,128,201,.16)}.foot.bad{background:rgba(229,86,109,.16)}
+.foot>div{max-width:640px;margin:0 auto}
+.fm{font-size:18px;font-weight:800;margin-bottom:10px;text-align:left}
+.foot.ok .fm{color:var(--g)}.foot.bad .fm{color:var(--r)}
+.finger{transition:transform .9s cubic-bezier(.3,1.4,.5,1);transform-box:fill-box;transform-origin:50% 100%}
+.big{font-size:44px;font-weight:800;color:var(--b)}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.mut{color:var(--mut);font-weight:700}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.tabs{flex-wrap:wrap}
+.auth{position:fixed;inset:0;z-index:30;background:var(--bg);display:grid;place-items:center;padding:18px}
+.auth .card{width:100%;max-width:380px}
+input,textarea{width:100%;font:inherit;font-weight:700;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px}
+textarea{resize:vertical;min-height:80px}
+.del{background:none;border:2px solid var(--r);color:var(--r);border-radius:999px;padding:6px 14px;font:inherit;font-weight:800;cursor:pointer;margin-top:8px}
+.link{background:none;border:0;color:var(--mut);font:inherit;font-weight:800;cursor:pointer}
+.post .row{margin-bottom:8px}
+</style>
+</head>
+<body>
+<div class="top"><b style="color:var(--g);font-family:Georgia,serif;font-size:21px">Mână în mână 🤝</b>
+  <div class="stats"><span title="zile la rând">🔥 <i id="sk">1</i></span><span title="puncte">✨ <i id="xp">0</i></span><span title="încercări">💙 <i id="hp">5</i></span></div></div>
+<div class="tabs"><button class="on" data-t="learn">Drumul meu</button><button data-t="community">Comunitate</button><button data-t="progress">Jurnal</button><button data-t="admin" id="tabAdmin" class="hide">Admin</button><button id="out" title="Ieșire">Ieșire</button></div>
+<main>
+  <div id="learn"><div class="card mut">Se încarcă semnele…</div></div>
+  <div id="progress" class="hide"></div>
+  <div id="community" class="hide"><div class="card"><textarea id="ptxt" maxlength="500" placeholder="Întreabă ceva sau împărtășește un sfat despre un semn…"></textarea><button class="btn" id="psend">Postează</button></div><div id="plist"></div></div>
+  <div id="admin" class="hide"></div>
+</main>
+
+<div id="auth" class="auth hide"><div class="card">
+  <div style="font-family:Georgia,serif;font-size:24px;margin-bottom:12px">Mână în mână 🤝</div>
+  <input id="nm" placeholder="Nume (doar la cont nou)" autocomplete="name">
+  <input id="em" type="email" placeholder="Email" autocomplete="email">
+  <input id="pw" type="password" placeholder="Parolă (minimum 6 caractere)" autocomplete="current-password">
+  <div id="amsg" style="color:var(--r);min-height:22px;margin-bottom:8px"></div>
+  <button class="btn" id="login">Intră în cont</button>
+  <button class="link" id="reg" style="width:100%;margin-top:12px">Creează cont nou</button>
+</div></div>
+
+<div id="player" class="hide">
+  <div class="ph"><button class="x" id="quit">✕</button><div class="bar"><i id="pbar" style="width:0"></i></div><span>💙 <b id="php">5</b></span></div>
+  <div class="pb" id="pbody"></div>
+  <div class="foot" id="foot"><div><div class="fm" id="fmsg"></div><button class="btn" id="fbtn">Verifică</button></div></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, getDoc, setDoc, addDoc, updateDoc, deleteDoc, doc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA_ywnxrcegivDz5ZkT-yTwnIePNeS9Kao",
+  authDomain: "sign-language-robot-hand.firebaseapp.com",
+  projectId: "sign-language-robot-hand",
+  storageBucket: "sign-language-robot-hand.firebasestorage.app",
+  messagingSenderId: "430163926603",
+  appId: "1:430163926603:web:5f89105fe525ece416f7ce"
+};
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+
+const $=id=>document.getElementById(id);
+let SIGNS=[], UNITS=[];
+let S={xp:0,hearts:5,streak:1,unlocked:0,done:{},hist:[]};
+let L=null;
+
+/* date din Firestore */
+const FING=["thumb","index","middle","ring","pinky"];
+async function loadData(){
+  const [sg,un]=await Promise.all([getDocs(collection(db,"signs")),getDocs(collection(db,"units"))]);
+  console.log("signs:",sg.size,"units:",un.size);
+  const ord=(a,b)=>(a.order??999)-(b.order??999);
+  SIGNS=sg.docs.map(d=>{const x=d.data(),p=x.robot_pose||{};return {id:d.id,order:x.order,name:x.name||d.id,desc:x.description||"",f:FING.map(k=>+p[k]||0)}}).sort(ord);
+  UNITS=un.docs.map(d=>d.data()).sort(ord).map((x,k)=>({t:x.title||"Capitolul "+(k+1),n:x.name||"",c:k%2?"u2":"",s:(x.signIds||[]).map(id=>SIGNS.findIndex(s=>s.id===id)).filter(i=>i>=0)}));
+}
+
+/* hand drawing */
+const FX=[38,78,105,132,160],FH=[70,100,110,100,80];
+function hand(f,anim,w){
+  let h=`<svg viewBox="0 0 220 240" width="${w||220}" style="max-width:100%"><rect x="55" y="130" width="120" height="90" rx="30" fill="var(--skin)" stroke="var(--ink)" stroke-opacity=".25"/>`;
+  FX.forEach((x,i)=>{const v=anim?.5:f[i],s=.35+.65*v,t=i===0?`rotate(${(1-v)*-35+20}deg) scaleY(${s})`:`scaleY(${s})`;
+    h+=`<g class="finger" data-i="${i}" style="${i===0?"transform-origin:100% 100%;":""}transform:${t}"><rect x="${x-11}" y="${(i===0?150:130)-FH[i]}" width="22" height="${FH[i]}" rx="11" fill="var(--skin)" stroke="var(--ink)" stroke-opacity=".25"/></g>`});
+  return h+`<circle cx="115" cy="185" r="6" fill="var(--y)"/></svg>`;
+}
+function animate(el,f){setTimeout(()=>el.querySelectorAll(".finger").forEach(g=>{const i=+g.dataset.i,v=f[i],s=.35+.65*v;g.style.transform=i===0?`rotate(${(1-v)*-35+20}deg) scaleY(${s})`:`scaleY(${s})`}),350)}
+
+/* header + tabs */
+function hud(){$("xp").textContent=S.xp;$("hp").textContent=S.hearts;$("sk").textContent=S.streak;$("php").textContent=S.hearts}
+
+
+/* path */
+function renderPath(){
+  $("learn").innerHTML=`<div class="card"><div style="font-family:Georgia,serif;font-size:22px">Bună, ${esc(ME.name)} 👋</div><div class="mut" style="margin-top:4px">Azi exersăm împreună. Un semn odată, în ritmul tău.</div></div>`+UNITS.map(u=>`<div class="unit ${u.c}"><small>${u.t.toUpperCase()}</small><div>${u.n}</div></div><div class="path">`+
+    u.s.map((i,k)=>{const st=S.done[i]?"done":i===S.unlocked?"cur":i<S.unlocked?"":"lock";
+      const off=[0,40,-40][k%3];
+      return `<div style="margin-left:${off*2}px;text-align:center"><button class="node ${st}" ${st==="lock"?"disabled":""} onclick="startLesson(${i})">${S.done[i]?"★":st==="lock"?"🔒":SIGNS[i].name}</button><div class="lbl">Semnul ${SIGNS[i].name}</div></div>`}).join("")+`</div>`).join("");
+  hud();
+}
+
+/* lesson */
+function others(id,n){return SIGNS.filter(s=>s.id!==id).sort(()=>Math.random()-.5).slice(0,n)}
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+function startLesson(i){
+  if(S.hearts<=0){S.hearts=5}
+  const s=SIGNS[i];
+  L={i,s,step:0,steps:["learn","pickHand","identify","camera"],sel:null,checked:false,opts:null};
+  $("player").classList.remove("hide");renderStep();
+}
+window.startLesson=startLesson;
+function renderStep(){
+  const st=L.steps[L.step],s=L.s,b=$("pbody");L.sel=null;L.checked=false;
+  $("pbar").style.width=(L.step/L.steps.length*100)+"%";hud();
+  const foot=$("foot"),btn=$("fbtn");foot.className="foot";$("fmsg").textContent="";btn.className="btn";btn.disabled=false;btn.textContent="Verifică";
+  if(st==="learn"){
+    b.innerHTML=`<h2>Un semn nou: ${s.name}</h2><div id="hw">${hand(s.f,true)}</div><p class="mut">Mâna robotică arată semnul <b>${s.name}</b>. ${s.desc||"Uită-te atent la degete."}</p>`;
+    animate(b,s.f);btn.textContent="Continuă";
+  }else if(st==="pickHand"){
+    L.opts=shuffle([s,...others(s.id,2)]);
+    b.innerHTML=`<h2>Care mână arată semnul „${s.name}”?</h2><div class="opts h">${L.opts.map((o,k)=>`<button class="opt" data-k="${k}">${hand(o.f,false,90)}</button>`).join("")}</div>`;
+    btn.disabled=true;bindOpts();
+  }else if(st==="identify"){
+    L.opts=shuffle([s,...others(s.id,2)]);
+    b.innerHTML=`<h2>Ce semn arată robotul?</h2>${hand(s.f,false,190)}<div class="opts h">${L.opts.map((o,k)=>`<button class="opt" data-k="${k}">${o.name}</button>`).join("")}</div>`;
+    btn.disabled=true;bindOpts();
+  }else if(st==="camera"){
+    b.innerHTML=`<h2>Acum tu! Arată semnul „${s.name}”</h2><div class="card" style="height:190px;display:grid;place-items:center;font-size:56px" id="cam">📷</div><p class="mut" id="cmsg">Ține mâna în fața camerei, apoi apasă butonul.</p>`;
+    btn.textContent="Sunt gata";
+  }
+}
+function bindOpts(){document.querySelectorAll(".opt").forEach(o=>o.onclick=()=>{if(L.checked)return;
+  document.querySelectorAll(".opt").forEach(x=>x.classList.remove("sel"));o.classList.add("sel");L.sel=+o.dataset.k;$("fbtn").disabled=false})}
+
+function feedback(ok,msg){
+  L.checked=true;$("foot").className="foot "+(ok?"ok":"bad");$("fmsg").textContent=msg;
+  const b=$("fbtn");b.textContent="Continuă";b.className="btn"+(ok?"":" r");b.disabled=false;
+  if(!ok){S.hearts--;hud()}
+}
+$("fbtn").onclick=async()=>{
+  const st=L.steps[L.step];
+  if(L.checked){ if(S.hearts<=0)return fail(); return next()}
+  if(st==="learn")return next();
+  if(st==="pickHand"||st==="identify"){
+    const ok=L.opts[L.sel].id===L.s.id;
+    document.querySelectorAll(".opt")[L.sel].style.borderColor=ok?"var(--g)":"var(--r)";
+    return feedback(ok,ok?"Corect! 🎉":`Incorect. Răspunsul era „${L.s.name}”.`);
+  }
+  if(st==="camera"){
+    const b=$("fbtn");b.disabled=true;
+    for(const m of ["Detectez mâna…","Extrag caracteristicile…","Clasificare ML…"]){$("cmsg").textContent=m;$("cam").textContent="🖐️";await new Promise(r=>setTimeout(r,800))}
+    const sim=Math.round(55+Math.random()*44),conf=Math.round(60+Math.random()*39),ok=sim>=70&&conf>=70;
+    L.res={t:L.s.name,d:ok?L.s.name:others(L.s.id,1)[0].name,c:conf,s:sim};
+    S.hist.push({t:L.s.name,s:sim});
+    feedback(ok,ok?`Bravo! Similaritate ${sim}%`:conf<70?"Încredere scăzută – apropie mâna de cameră.":`Am detectat „${L.res.d}”. Mai încearcă!`);
+  }
+};
+function next(){L.step++;if(L.step>=L.steps.length)return finish();renderStep()}
+function fail(){
+  $("pbody").innerHTML=`<h2>Ai rămas fără încercări 💙</h2><p class="mut">Nu-i nimic, respiră și reia cu răbdare.</p>`;
+  $("foot").className="foot";$("fmsg").textContent="";const b=$("fbtn");b.className="btn r";b.textContent="Reia lecția";
+  b.onclick=()=>{S.hearts=5;b.onclick=null;location.hash="";bindMain();startLesson(L.i)}
+}
+function bindMain(){$("fbtn").onclick=window.__main}
+window.__main=$("fbtn").onclick;
+function finish(){
+  const r=L.res,gain=S.hearts>0?15:0;
+  S.xp+=gain;S.done[L.i]=true;if(S.unlocked===L.i)S.unlocked=Math.min(L.i+1,SIGNS.length-1);saveProgress();
+  $("pbar").style.width="100%";
+  const fb=r.s>=90?"Excelent! Configurația e foarte apropiată de cea de referință.":r.s>=70?"Bine! Mai poți îmbunătăți poziția degetelor.":"Continuă să exersezi – compară cu demonstrația robotului.";
+  $("pbody").innerHTML=`<h2>Ai reușit! 🎉</h2><div class="grid4">
+   <div class="card"><div class="mut">Semn țintă</div><div class="big">${r.t}</div></div>
+   <div class="card"><div class="mut">Semn detectat</div><div class="big">${r.d}</div></div>
+   <div class="card"><div class="mut">Confidence</div><div class="big">${r.c}%</div></div>
+   <div class="card"><div class="mut">Similaritate</div><div class="big">${r.s}%</div></div></div>
+   <div class="card">💬 ${fb}</div><div class="card">✨ +${gain} puncte</div>`;
+  $("foot").className="foot ok";$("fmsg").textContent="";const b=$("fbtn");b.className="btn";b.textContent="Înapoi la drum";b.disabled=false;
+  L.checked=false;L.steps=["done"];L.step=0;
+  b.onclick=()=>{$("player").classList.add("hide");b.onclick=window.__main;renderPath()};
+}
+$("quit").onclick=()=>{$("player").classList.add("hide");$("fbtn").onclick=window.__main;renderPath()};
+
+/* progress */
+function renderProgress(){
+  const by={};S.hist.forEach(h=>(by[h.t]=by[h.t]||[]).push(h.s));
+  const avg=S.hist.length?Math.round(S.hist.reduce((a,h)=>a+h.s,0)/S.hist.length)+"%":"–";
+  $("progress").innerHTML=`<div class="grid4"><div class="card"><div class="mut">Exerciții</div><div class="big">${S.hist.length}</div></div><div class="card"><div class="mut">Scor mediu</div><div class="big">${avg}</div></div></div>
+  <div class="card">${SIGNS.map((s,k)=>{const a=by[s.name],best=a?Math.max(...a):0;return `<div style="margin-bottom:12px"><div class="row"><b>Semnul ${s.name} ${S.done[k]?"★":""}</b><span class="mut">${a?a.length+" încercări · best "+best+"%":"neîncercat"}</span></div><div class="bar"><i style="width:${best}%"></i></div></div>`}).join("")}</div>
+  <p class="mut">Semnele vin din Firestore. Progresul se salvează în contul tău. Recunoașterea din cameră este încă simulată.</p>`;
+}
+
+/* conturi, comunitate, admin */
+let ME=null,pendingName="",unsubPosts=null,loaded=false,POSTS=[];
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const fmt=t=>t&&t.toDate?t.toDate().toLocaleString("ro-RO",{dateStyle:"short",timeStyle:"short"}):"acum";
+const authMsg=m=>{$("amsg").textContent=m};
+const errRo=e=>({"auth/invalid-credential":"Email sau parolă greșită.","auth/email-already-in-use":"Există deja un cont cu acest email.","auth/weak-password":"Parola trebuie să aibă minimum 6 caractere.","auth/invalid-email":"Email invalid.","auth/operation-not-allowed":"Activează Email/Password în Firebase Authentication.","permission-denied":"Nu ai voie să faci această acțiune."}[e.code]||e.code||e.message);
+
+function showTab(t){
+  document.querySelectorAll(".tabs button[data-t]").forEach(x=>x.classList.toggle("on",x.dataset.t===t));
+  ["learn","community","progress","admin"].forEach(id=>$(id).classList.toggle("hide",id!==t));
+  if(t==="progress")renderProgress();if(t==="admin")renderAdmin();
+}
+document.querySelectorAll(".tabs button[data-t]").forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+$("login").onclick=async()=>{try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pw").value)}catch(e){authMsg(errRo(e))}};
+$("reg").onclick=async()=>{const n=$("nm").value.trim();if(!n)return authMsg("Scrie un nume.");pendingName=n;
+  try{await createUserWithEmailAndPassword(auth,$("em").value.trim(),$("pw").value)}catch(e){authMsg(errRo(e))}};
+$("out").onclick=()=>signOut(auth);
+
+/* postări: citire în timp real, creare, ștergere */
+function watchPosts(){
+  const q=query(collection(db,"posts"),orderBy("createdAt","desc"),limit(50));
+  unsubPosts=onSnapshot(q,s=>{POSTS=s.docs.map(d=>({id:d.id,...d.data()}));renderPosts()},e=>{$("plist").innerHTML=`<div class="card mut">${esc(errRo(e))}</div>`});
+}
+function renderPosts(){
+  $("plist").innerHTML=POSTS.length?POSTS.map(p=>{const mine=p.uid===ME.uid;
+    return `<div class="card post"><div class="row"><b>${esc(p.author)}</b><span class="mut">${fmt(p.createdAt)}</span></div><div>${esc(p.text)}</div>${mine||ME.role==="admin"?`<button class="del" data-id="${p.id}">Șterge${mine?"":" (admin)"}</button>`:""}</div>`}).join("")
+    :`<div class="card mut">Nicio postare încă. Scrie prima întrebare.</div>`;
+  $("plist").querySelectorAll(".del").forEach(b=>b.onclick=()=>delPost(b.dataset.id));
+}
+$("psend").onclick=async()=>{const t=$("ptxt").value.trim();if(!t)return;
+  try{await addDoc(collection(db,"posts"),{uid:ME.uid,author:ME.name,text:t.slice(0,500),createdAt:serverTimestamp()});$("ptxt").value=""}catch(e){alert(errRo(e))}};
+async function delPost(id){if(!confirm("Ștergi această postare?"))return;try{await deleteDoc(doc(db,"posts",id))}catch(e){alert(errRo(e))}}
+
+/* admin: utilizatori + ștergere postări per utilizator */
+async function renderAdmin(){
+  if(!ME||ME.role!=="admin")return;
+  $("admin").innerHTML=`<div class="card mut">Se încarcă…</div>`;
+  const [us,ps]=await Promise.all([getDocs(collection(db,"users")),getDocs(collection(db,"posts"))]);
+  const cnt={};ps.docs.forEach(d=>{const u=d.data().uid;cnt[u]=(cnt[u]||0)+1});
+  $("admin").innerHTML=`<div class="grid4"><div class="card"><div class="mut">Utilizatori</div><div class="big">${us.size}</div></div><div class="card"><div class="mut">Postări</div><div class="big">${ps.size}</div></div></div><div class="card">`+
+   us.docs.map(d=>{const u=d.data(),c=cnt[d.id]||0;
+     return `<div class="row"><div><b>${esc(u.name)}</b><div class="mut">${esc(u.email)} · ${esc(u.role)}</div></div>${c&&d.id!==ME.uid?`<button class="del" data-u="${d.id}">Șterge ${c} postări</button>`:`<span class="mut">${c} postări</span>`}</div>`}).join("")+`</div>`;
+  $("admin").querySelectorAll(".del").forEach(b=>b.onclick=async()=>{
+    if(!confirm("Ștergi toate postările acestui utilizator?"))return;
+    try{const q=await getDocs(query(collection(db,"posts"),where("uid","==",b.dataset.u)));await Promise.all(q.docs.map(d=>deleteDoc(d.ref)));renderAdmin()}catch(e){alert(errRo(e))}});
+}
+
+/* progres salvat în Firestore */
+const today=()=>new Date().toISOString().slice(0,10);
+async function saveProgress(){
+  if(!ME||!L||!L.res)return;
+  const r=L.res,id=L.s.id,u=doc(db,"users",ME.uid);
+  try{
+    const pr=doc(u,"progress",id),old=await getDoc(pr),o=old.exists()?old.data():{};
+    await setDoc(pr,{completed:true,bestScore:Math.max(o.bestScore||0,r.s),attempts:(o.attempts||0)+1,lastAttemptAt:serverTimestamp()});
+    await addDoc(collection(u,"attempts"),{signId:id,predicted:r.d,confidence:r.c,score:r.s,createdAt:serverTimestamp()});
+    await updateDoc(u,{stats:{xp:S.xp,unlocked:S.unlocked,streak:S.streak,lastActiveDate:today()}});
+  }catch(e){console.error("Salvare progres:",e)}
+}
+async function loadProgress(uid,stats){
+  const u=doc(db,"users",uid),st=stats||{};
+  const [pg,at]=await Promise.all([getDocs(collection(u,"progress")),getDocs(query(collection(u,"attempts"),orderBy("createdAt","desc"),limit(200)))]);
+  pg.docs.forEach(d=>{const i=SIGNS.findIndex(x=>x.id===d.id);if(i>=0&&d.data().completed)S.done[i]=true});
+  S.hist=at.docs.map(d=>d.data()).reverse().map(x=>({t:(SIGNS.find(g=>g.id===x.signId)||{}).name||x.signId,s:x.score}));
+  S.xp=st.xp||0;S.unlocked=Math.min(st.unlocked||0,Math.max(SIGNS.length-1,0));
+  const t=today(),y=new Date(Date.now()-864e5).toISOString().slice(0,10);
+  S.streak=st.lastActiveDate===t?(st.streak||1):st.lastActiveDate===y?(st.streak||1)+1:1;
+}
+
+/* pornire: autentificare */
+onAuthStateChanged(auth,async user=>{
+  if(unsubPosts){unsubPosts();unsubPosts=null}
+  if(!user){ME=null;$("auth").classList.remove("hide");return}
+  try{
+    const ref=doc(db,"users",user.uid);let snap=await getDoc(ref);
+    if(!snap.exists()){await setDoc(ref,{name:pendingName||user.email.split("@")[0],email:user.email,role:"user",createdAt:serverTimestamp()});snap=await getDoc(ref)}
+    const u=snap.data();ME={uid:user.uid,name:u.name,role:u.role};
+    S={xp:0,hearts:5,streak:1,unlocked:0,done:{},hist:[]};
+    if(!loaded){await loadData();loaded=true}
+    await loadProgress(user.uid,u.stats);
+    authMsg("");$("auth").classList.add("hide");
+    $("tabAdmin").classList.toggle("hide",ME.role!=="admin");
+    if(UNITS.length)renderPath();else $("learn").innerHTML=`<div class="card"><div style="color:var(--r)">Nu am găsit capitole în Firestore.</div><div class="mut">Găsite: ${SIGNS.length} semne.</div></div>`;
+    watchPosts();showTab("learn");
+  }catch(e){console.error(e);$("auth").classList.remove("hide");authMsg(errRo(e))}
+});
+</script>
+</body>
+</html>
